@@ -3,217 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Humming Table - Card News02</title>
-
-  <!-- Pretendard 폰트 불러오기 (CDN) -->
-  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-
+  <title>mall-main</title>
   <style>
-    /* Pretendard 폰트 적용 및 기본 설정 */
     * {
       box-sizing: border-box;
-      font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      background-color: #333;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background-color: #f5f2ed;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
-      color: #fff;
-    }
-
-    /* 슬라이더 전체 컨테이너 */
-    .slider-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-      padding: 0 4rem; /* 모바일에서 화살표가 화면 밖으로 나가는 것 방지 */
-    }
-
-    /* 이미지 상단 인디케이터 (예: 1 / 8) */
-    .image-counter {
-      font-size: 1.2rem;
-      font-weight: 600;
-      letter-spacing: 1px;
-      color: #e0e0e0;
-    }
-
-    /* 슬라이더 영역 */
-    .slider-container {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      /* 이미지 가로 크기 최대 360px 고정, 화면 작아지면 반응형 축소 */
-      width: 100%;
-      max-width: 540px;
-    }
-
-    /* 이미지 스타일 */
-    #slider-image {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      object-fit: cover;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      display: block;
-    }
-
-    /* 화살표 버튼 공통 스타일 */
-    .arrow-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: white;
-      font-size: 1.5rem;
-      width: 44px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      position: absolute;
-      top: 50%;
-      border-radius: 50%;
-      transition: background 0.3s ease, transform 0.2s ease;
-      user-select: none;
-    }
-
-    .arrow-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    .arrow-btn:active {
-      transform: translateY(-50%) scale(0.95);
-    }
-
-    /* 이미지 기준 좌우로 1.5rem 띄워서 배치 */
-    .left-arrow {
-      left: -1.5rem;
-      transform: translate(-100%, -50%);
-    }
-
-    .right-arrow {
-      right: -1.5rem;
-      transform: translate(100%, -50%);
-    }
-
-    /* 모바일 반응형 시 버튼 밀림 방지 */
-    .left-arrow:active {
-      transform: translate(-100%, -50%) scale(0.95);
-    }
-    .right-arrow:active {
-      transform: translate(100%, -50%) scale(0.95);
     }
   </style>
 </head>
 <body>
 
-  <div class="slider-wrapper">
-    <!-- 상단 갯수 표시 영역 (예: 1 / 8) -->
-    <div class="image-counter" id="image-counter">불러오는 중...</div>
 
-    <div class="slider-container">
-      <button class="arrow-btn left-arrow" onclick="prevSlide()">&#10094;</button>
-      <img src="" alt="슬라이드 이미지" id="slider-image">
-      <button class="arrow-btn right-arrow" onclick="nextSlide()">&#10095;</button>
-    </div>
+  <!-- 시안 프레임 영역 -->
+  <div class="preview-container">
+    <!-- 기본으로 표시될 웹(데스크톱) 이미지 경로 설정 -->
+    <img src="img/style_book.jpg" alt="디자인 시안" class="design-img" id="design-image">
   </div>
-
-  <script>
-    let currentIndex = 1;
-    let totalImages = 0;
-    const maxSearchLimit = 99; // 최대 검색할 수 있는 이미지 번호 한계값
-
-    const sliderImage = document.getElementById("slider-image");
-    const counterElement = document.getElementById("image-counter");
-
-    // 숫자 1 -> "01", 10 -> "10" 으로 변환하는 함수
-    function formatNumber(num) {
-      return String(num).padStart(2, '0');
-    }
-
-    // 인디케이터 텍스트 업데이트
-    function updateCounter() {
-      if (totalImages > 0) {
-        counterElement.textContent = `${currentIndex} / ${totalImages}`;
-      } else {
-        counterElement.textContent = `- / -`;
-      }
-    }
-
-    // 현재 선택된 인덱스의 이미지 출력
-    function displayImage() {
-      if (totalImages === 0) return;
-      sliderImage.src = `img/img${formatNumber(currentIndex)}.png`;
-      updateCounter();
-    }
-
-    // 페이지 진입 시 존재하는 이미지 전체 개수를 탐색하는 함수
-    function detectTotalImages() {
-      let checkIndex = 1;
-
-      function checkNext() {
-        if (checkIndex > maxSearchLimit) {
-          totalImages = checkIndex - 1;
-          initSlider();
-          return;
-        }
-
-        const tempImg = new Image();
-        tempImg.src = `img/img${formatNumber(checkIndex)}.png`;
-
-        tempImg.onload = function() {
-          checkIndex++;
-          checkNext(); // 다음 번호 이미지 탐색
-        };
-
-        tempImg.onerror = function() {
-          // 더 이상 이미지가 존재하지 않으면 탐색 종료
-          totalImages = checkIndex - 1;
-          initSlider();
-        };
-      }
-
-      checkNext();
-    }
-
-    // 초기화 및 첫 화면 렌더링
-    function initSlider() {
-      if (totalImages === 0) {
-        counterElement.textContent = "이미지가 없습니다";
-        return;
-      }
-      currentIndex = 1;
-      displayImage();
-    }
-
-    // 이전 버튼 클릭
-    function prevSlide() {
-      if (totalImages === 0) return;
-      currentIndex--;
-      if (currentIndex < 1) {
-        currentIndex = totalImages;
-      }
-      displayImage();
-    }
-
-    // 다음 버튼 클릭
-    function nextSlide() {
-      if (totalImages === 0) return;
-      currentIndex++;
-      if (currentIndex > totalImages) {
-        currentIndex = 1;
-      }
-      displayImage();
-    }
-
-    // 실행 시작: 이미지 개수 탐색 실행
-    detectTotalImages();
-  </script>
 
 </body>
 </html>
